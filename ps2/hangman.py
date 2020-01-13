@@ -1,7 +1,7 @@
 # Problem Set 2, hangman.py
 # Name: Morgan
 # Collaborators:
-# Time spent: 2 hours so far!
+# Time spent: 4 and a half hours so far!
 
 # Hangman Game
 # -----------------------------------
@@ -219,10 +219,23 @@ def match_with_gaps(my_word, other_word):
         _ , and my_word and other_word are of the same length;
         False otherwise: 
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    # Remove extra space before processing
+    my_word = my_word.replace(' ','')
+    
+    if len(my_word) != len(other_word):
+        return False
+    
+    for i in range(len(my_word)):
+        if my_word[i] == other_word[i]:
+            continue
+        # The hidden letter(_ ) cannot be one of the letters in the word
+        # that has already been revealed
+        elif my_word[i] == "_" and other_word[i] not in my_word:
+            continue
+        else: 
+            return False
 
-
+    return True
 
 def show_possible_matches(my_word):
     '''
@@ -283,8 +296,7 @@ if __name__ == "__main__":
     # To test part 2, comment out the pass line above and
     # uncomment the following two lines.
     
-    #secret_word = choose_word(wordlist)
-    secret_word = 'test' #test word
+    secret_word = choose_word(wordlist)
     hangman(secret_word)
 
 ###############
