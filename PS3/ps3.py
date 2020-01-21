@@ -101,9 +101,7 @@ def get_word_score(word, n):
     # Calculate second component    
     word_multiplier = (7 * wordlen - 3 * (n - wordlen))
     
-    if word_multiplier > 1:
-        pass
-    else:
+    if word_multiplier < 1:
         word_multiplier = 1
         
     return (point_sum * word_multiplier)
@@ -181,15 +179,19 @@ def update_hand(hand, word):
     returns: dictionary (string -> int)
     """
     word = word.lower() # Clean input word
-    new_hand = hand.copy()
+    new_hand = hand.copy() # Clone hand so as to not mutate original
     
+    # Iterate over each letter in word, and if new_hand.get finds that letter
+    # is in the dict, decrement it by 1 and delete it if the letter key/value
+    # pair hits 0.
     for letter in word:
-        if new_hand.get(letter):
+        if letter in new_hand.keys():
             new_hand[letter] -= 1
             if new_hand[letter] == 0:
                 del new_hand[letter]
 
     return new_hand
+
 #
 # Problem #3: Test word validity
 #
@@ -205,7 +207,31 @@ def is_valid_word(word, hand, word_list):
     returns: boolean
     """
 
-    pass  # TO DO... Remove this line when you implement this function
+    word = word.lower() # Ignore case
+    new_hand = hand.copy() # Do not mutate hand
+    new_word_list = word_list.copy() # Do not mutate word_list
+
+    # Iterate over each letter in word, and first check if the letter
+    # exists within the keys of new_hand dictionary.
+    # If this test ever fails, return False; this word doesn't work.
+    # If this test succeeds, decrement the key value of that letter
+    # within new_hand (this was cloned from hand so as to avoid mutating
+    # the list outside of this function) and check to see if that key 
+    # now evaluates to 0. If it does, delete the key, and continue iterating.
+    for letter in word:
+        if letter in new_hand.keys():
+            new_hand[letter] -= 1
+            if new_hand[letter] == 0:
+                del new_hand[letter]
+        else:
+            return False
+    
+    # If the word got this far, THEN:
+    # determine if the word actually exists in the word list
+    if word in new_word_list:
+        return True
+    else:
+        return False
 
 #
 # Problem #5: Playing a hand
