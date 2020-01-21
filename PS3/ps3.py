@@ -3,9 +3,8 @@
 # The 6.0001 Word Game
 # Created by: Kevin Luu <luuk> and Jenna Wiens <jwiens>
 #
-# Name          : <your name>
-# Collaborators : <your collaborators>
-# Time spent    : <total time>
+# Name          : Morgan
+# Collaborators : Nope!
 
 import math
 import random
@@ -16,7 +15,9 @@ CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, \
+    'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, \
+    's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10, '*': 0
 }
 
 # -----------------------------------
@@ -72,9 +73,9 @@ def get_word_score(word, n):
     valid word.
 
     You may assume that the input word is always either a string of letters, 
-    or the empty string "". You may not assume that the string will only contain 
-    lowercase letters, so you will have to handle uppercase and mixed case strings 
-    appropriately. 
+    or the empty string "". You may not assume that the string will only 
+    contain lowercase letters, so you will have to handle uppercase and mixed 
+    case strings appropriately. 
 
 	The score for a word is the product of two components:
 
@@ -145,11 +146,13 @@ def deal_hand(n):
     """
     
     hand={}
-    num_vowels = int(math.ceil(n / 3))
+    num_vowels = int(math.ceil(n / 3)) - 1 # Remove 1 for wildcard
 
     for i in range(num_vowels):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
+    
+    hand['*'] = 1 # Add one wildcard to hand
     
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
@@ -226,10 +229,18 @@ def is_valid_word(word, hand, word_list):
         else:
             return False
     
-    # If the word got this far, THEN:
-    # determine if the word actually exists in the word list
+    # Checks for two cases: If the word is in the word list, then return True,
+    # no problem there. If there is a wildcard in the word, then attempt to 
+    # replace the wildcard in the word with every possible vowel, and if the
+    # word is at any point in the word list, return true. Otherwise, false.
+    # Finally, return False if all else fails.
     if word in new_word_list:
         return True
+    elif '*' in word:
+        for char in VOWELS:
+            if word.replace('*', char) in new_word_list:
+                return True
+        return False
     else:
         return False
 
@@ -301,7 +312,8 @@ def play_hand(hand, word_list):
             # Otherwise (the word is not valid):
                 # Reject invalid word (print a message)
                 
-            # update the user's hand by removing the letters of their inputted word
+            # update the user's hand by removing the letters 
+            # of their inputted word
             
 
     # Game is over (user entered '!!' or ran out of letters),
@@ -322,10 +334,10 @@ def play_hand(hand, word_list):
 
 def substitute_hand(hand, letter):
     """ 
-    Allow the user to replace all copies of one letter in the hand (chosen by user)
-    with a new letter chosen from the VOWELS and CONSONANTS at random. The new letter
-    should be different from user's choice, and should not be any of the letters
-    already in the hand.
+    Allow the user to replace all copies of one letter in the hand 
+    (chosen by user) with a new letter chosen from the VOWELS and CONSONANTS 
+    at random. The new letter should be different from user's choice, and 
+    should not be any of the letters already in the hand.
 
     If user provide a letter not in the hand, the hand should be the same.
 
