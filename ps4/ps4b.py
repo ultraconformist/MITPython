@@ -1,7 +1,5 @@
 # Problem Set 4B
-# Name: <your name here>
-# Collaborators:
-# Time Spent: x:xx
+# Name: Morgan
 
 import string
 
@@ -70,15 +68,16 @@ class Message(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
-
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
+        
     def get_message_text(self):
         '''
         Used to safely access self.message_text outside of the class
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +86,8 @@ class Message(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        new_valid_words = self.valid_words.copy()
+        return new_valid_words
 
     def build_shift_dict(self, shift):
         '''
@@ -103,7 +103,29 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        pass #delete this line and replace with your code here
+        UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        lowercase = 'abcdefghijklmnopqrstuvwxyz'
+        shift_dict = {} # Create empty dictionary
+        
+        # Iterate over each index in both UPPERCASE and LOWERCASE,
+        # creating a key for the index being iterated on,
+        # and setting it equal to the value at index in the string + shift
+        # subtracting the length of the string being iterated if string + shift
+        # will exceed the length of that string
+        
+        for i in range(len(UPPERCASE)):
+            if (i + shift) >= len(UPPERCASE):
+                shift_dict[UPPERCASE[i]] = UPPERCASE[(i+shift)-len(UPPERCASE)]
+            else:
+                shift_dict[UPPERCASE[i]] = UPPERCASE[(i + shift)]
+
+        for i in range(len(lowercase)):
+            if (i + shift) >= len(lowercase):
+                shift_dict[lowercase[i]] = lowercase[(i+shift)-len(lowercase)]
+            else:
+                shift_dict[lowercase[i]] = lowercase[(i + shift)]                
+
+        return shift_dict
 
     def apply_shift(self, shift):
         '''
