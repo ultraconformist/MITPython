@@ -260,7 +260,8 @@ class CiphertextMessage(Message):
             test_shift_split = test_shift.split()
             matches = 0
             for word in test_shift_split:
-                matches += self.valid_words.count(word)
+                if is_word(self.valid_words, word):
+                    matches += 1
             match_dict[shift] = matches
  
         # For each entry in match_dict, find the key with the highest value
