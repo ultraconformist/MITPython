@@ -151,10 +151,54 @@ class PhraseTrigger(Trigger):
             return False   
 
 # Problem 3
-# TODO: TitleTrigger
-
+class TitleTrigger(PhraseTrigger):
+    def __init__(self, phrase):
+        '''
+        Initializes a TitleTrigger object. Inherits evaluate from Trigger 
+        superclass and is_phrase_in function from PhraseTrigger.
+        
+        phrase (string): A phrase to be evaluated
+        
+        A TitleTrigger has one attribute:
+            self.phrase (string, determined by input phrase)
+        
+        TitleTrigger inherits one method from PhraseTrigger:
+            is_phrase_in(text): Returns True if self.phrase is present in text,
+            and False otherwise
+            
+        TitleTrigger implements one method:
+            evaluate(story): Takes a NewsStory object; Returns True if
+            self.phrase is present in story's title, False otherwise
+        '''
+        PhraseTrigger.__init__(self, phrase)
+    
+    def evaluate(self, story):
+        return self.is_phrase_in(story.get_title())
+    
 # Problem 4
-# TODO: DescriptionTrigger
+class DescriptionTrigger(PhraseTrigger):
+    def __init__(self, phrase):
+        '''
+        Initializes a DescriptionTrigger object. Inherits evaluate from Trigger 
+        superclass and is_phrase_in function from PhraseTrigger.
+        
+        phrase (string): A phrase to be evaluated
+        
+        A DescriptionTrigger has one attribute:
+            self.phrase (string, determined by input phrase)
+        
+        DescriptionTrigger inherits one method from PhraseTrigger:
+            is_phrase_in(text): Returns True if self.phrase is present in text,
+            and False otherwise
+            
+        DescriptionTrigger implements one method:
+            evaluate(story): Takes a NewsStory object; Returns True if
+            self.phrase is present in story's description, False otherwise
+        '''
+        PhraseTrigger.__init__(self, phrase)
+    
+    def evaluate(self, story):
+        return self.is_phrase_in(story.get_description())
 
 # TIME TRIGGERS
 
