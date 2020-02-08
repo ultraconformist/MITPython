@@ -286,13 +286,59 @@ class AfterTrigger(TimeTrigger):
 # COMPOSITE TRIGGERS
 
 # Problem 7
-# TODO: NotTrigger
+class NotTrigger(Trigger):
+    def __init__(self, trigger):
+        '''
+        Initializes a NotTrigger object.
+        
+        trigger (Trigger): A Trigger object.
+        
+        A NotTrigger implements one method:
+            evaluate(story): Takes a NewsStory object; inverts the result of
+            self.trigger when evaluating(story)
+        '''
+        self.trigger = trigger
+    
+    def evaluate(self, story):
+        return not self.trigger.evaluate(story)
 
 # Problem 8
-# TODO: AndTrigger
+class AndTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        '''
+        Initializes an AndTrigger object.
+        
+        trigger1 (Trigger): A Trigger object
+        trigger2 (Trigger): A Trigger object
+        
+        A NotTrigger implements one method:
+            evaluate(story): Takes a NewsStory object; returns True only if 
+            both self.trigger1 and self.trigger2 return True when passed story
+        '''
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+    
+    def evaluate(self, story):
+        return self.trigger1.evaluate(story) and self.trigger2.evaluate(story)
 
 # Problem 9
-# TODO: OrTrigger
+class OrTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        '''
+        Initializes an OrTrigger object.
+        
+        trigger1 (Trigger): A Trigger object
+        trigger2 (Trigger): A Trigger object
+        
+        A OrTrigger implements one method:
+            evaluate(story): Takes a NewsStory object; returns True if either 
+            self.trigger1 and self.trigger2 return True when passed story
+        '''
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+    
+    def evaluate(self, story):
+        return self.trigger1.evaluate(story) or self.trigger2.evaluate(story)
 
 
 #======================
