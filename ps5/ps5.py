@@ -350,12 +350,20 @@ def filter_stories(stories, triggerlist):
     """
     Takes in a list of NewsStory instances.
 
-    Returns: a list of only the stories for which a trigger in triggerlist fires.
+    Returns: a list of only the stories for which a trigger 
+    in triggerlist fires.
     """
-    # TODO: Problem 10
-    # This is a placeholder
-    # (we're just returning all the stories, with no filtering)
-    return stories
+    stories_triggered = []
+    
+    for story in stories:
+        for trigger in triggerlist:
+            if trigger.evaluate(story):
+                stories_triggered.append(story)
+                break
+            else:
+                pass
+    
+    return stories_triggered
 
 
 
@@ -379,12 +387,31 @@ def read_trigger_config(filename):
         if not (len(line) == 0 or line.startswith('//')):
             lines.append(line)
 
-    # TODO: Problem 11
-    # line is the list of lines that you need to parse and for which you need
-    # to build triggers
-
-    print(lines) # for now, print it so you see what it contains!
-
+    t_names = {'TITLE': TitleTrigger, 'DESCRIPTION': PhraseTrigger,
+                    'AFTER': AfterTrigger, 'BEFORE': BeforeTrigger,
+                    'NOT': NotTrigger, 'AND': AndTrigger,
+                    'OR': OrTrigger}
+    
+    trigger_list = []
+    
+    trigger_dict = {}
+    
+    def parse_line(line):
+        if line[1] == 'OR' or line[1] == 'AND':
+            trigger_dict[line[0]] = t_names[line[1]](trigger_dict[line[2]],
+                        trigger_dict[line[3]])
+        else:
+            trigger_dict[line[0]] = t_names[line[1]](line[2])
+            
+    for line in lines:
+        line = line.split(',')
+        if line[0] == 'ADD':
+            for t in line[1:]:
+                trigger_list.append(trigger_dict[t])
+        else:
+            parse_line(line)
+    print(trigger_list)
+    return trigger_list
 
 
 SLEEPTIME = 120 #seconds -- how often we poll
@@ -393,15 +420,14 @@ def main_thread(master):
     # A sample trigger list - you might need to change the phrases to correspond
     # to what is currently in the news
     try:
-        t1 = TitleTrigger("election")
-        t2 = DescriptionTrigger("Trump")
-        t3 = DescriptionTrigger("Clinton")
-        t4 = AndTrigger(t2, t3)
-        triggerlist = [t1, t4]
+        #t1 = TitleTrigger("Debate")
+        #t2 = DescriptionTrigger("Bernie")
+        #t3 = DescriptionTrigger("Pete")
+        #t4 = AndTrigger(t2, t3)
+        #triggerlist = [t1, t4]
 
         # Problem 11
-        # TODO: After implementing read_trigger_config, uncomment this line 
-        # triggerlist = read_trigger_config('triggers.txt')
+        triggerlist = read_trigger_config('triggers.txt')
         
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
@@ -426,7 +452,8 @@ def main_thread(master):
             if newstory.get_guid() not in guidShown:
                 cont.insert(END, newstory.get_title()+"\n", "title")
                 cont.insert(END, "\n---------------------------------------------------------------\n", "title")
-                cont.insert(END, newstory.get_description())
+                cont.insert(END, newstory.get_description(), ' ')
+                cont.insert(END, newstory.get_pubdate())
                 cont.insert(END, "\n*********************************************************************\n", "title")
                 guidShown.append(newstory.get_guid())
 
@@ -454,7 +481,7 @@ def main_thread(master):
 
 if __name__ == '__main__':
     root = Tk()
-    root.title("Some RSS parser")
+    root.title("MorgieParser")
     t = threading.Thread(target=main_thread, args=(root,))
     t.start()
     root.mainloop()
