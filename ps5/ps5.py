@@ -203,14 +203,85 @@ class DescriptionTrigger(PhraseTrigger):
 # TIME TRIGGERS
 
 # Problem 5
-# TODO: TimeTrigger
-# Constructor:
-#        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
-#        Convert time from string to a datetime before saving it as an attribute.
-
+class TimeTrigger(Trigger):
+    def __init__(self, time):
+        '''
+        Initializes a TimeTrigger object. Inherits evaluate from Trigger parent
+        class. Takes in time as a string. Abstract class.
+        
+        time (string): A time in EST in format '%d %b %Y %H:%M:%S'
+        
+        A TimeTrigger has one attribute:
+            self.time (datetime, determined by input time string and converted 
+            to datetime before saved as an attribute)
+        '''
+        self.time = datetime.strptime(time, '%d %b %Y %H:%M:%S')
+        
 # Problem 6
 # TODO: BeforeTrigger and AfterTrigger
+class BeforeTrigger(TimeTrigger):
+    def __init__(self, time):
+        '''
+        Initializes a BeforeTrigger object, a subclass of TimeTrigger.
+        Inherits self.time from TimeTrigger.
+        
+        time (string): A time in EST in format '%d %b %Y %H:%M:%S'
+        
+        A BeforeTrigger inherits one attribute from self.time:
+            self.time (datetime, determined by input time string and converted 
+            to datetime before saved as an attribute)
+        
+        A BeforeTrigger implements one method:
+            evaluate(story): Takes a NewsStory object; returns True 
+            if self.time occurs strictly before the story's time,
+            and False otherwise
+        '''
+        TimeTrigger.__init__(self, time)
+        
+    def evaluate(self, story):
+        # try-except to handle offset-naive/offset-aware mismatch case
+        try:
+            result = story.get_pubdate() < self.time
+        except TypeError:
+            corrected_time = self.time.replace(tzinfo=pytz.timezone("EST"))
+            result = story.get_pubdate() < corrected_time
+            
+        if result:
+            return True
+        else:
+            return False
 
+class AfterTrigger(TimeTrigger):
+    def __init__(self, time):
+        '''
+        Initializes a AfterTrigger object, a subclass of TimeTrigger.
+        Inherits self.time from TimeTrigger.
+        
+        time (string): A time in EST in format '%d %b %Y %H:%M:%S'
+        
+        An AfterTrigger inherits one attribute from self.time:
+            self.time (datetime, determined by input time string and converted 
+            to datetime before saved as an attribute)
+        
+        An AfterTrigger implements one method:
+            evaluate(story): Takes a NewsStory object; returns True 
+            if self.time occurs strictly after the story's time,
+            and False otherwise
+        '''
+        TimeTrigger.__init__(self, time)
+        
+    def evaluate(self, story):
+        # same as BeforeTrigger
+        try:
+            result = story.get_pubdate() > self.time
+        except TypeError:
+            corrected_time = self.time.replace(tzinfo=pytz.timezone("EST"))
+            result = story.get_pubdate() > corrected_time
+            
+        if result:
+            return True
+        else:
+            return False
 
 # COMPOSITE TRIGGERS
 
