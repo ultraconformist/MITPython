@@ -1,4 +1,4 @@
-# 6.0001 Problem Set 3
+will# 6.0001 Problem Set 3
 #
 # The 6.0001 Word Game
 # Created by: Kevin Luu <luuk> and Jenna Wiens <jwiens>

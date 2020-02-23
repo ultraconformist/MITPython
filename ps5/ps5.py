@@ -123,29 +123,24 @@ class PhraseTrigger(Trigger):
         self.phrase = phrase
         
     def is_phrase_in(self, text):
-        
-        # Processes text input by first stripping out all punctuation,
-        # by replacing with whitespace, then splitting the text into substrings
-        # on whitespace boundaries and rejoining with spaces, and then finally
-        # reducing all characters in text to lowercase
-        for char in string.punctuation:
-            text = text.replace(char, ' ')
-        text_list = text.split()
-        text = ' '.join(text_list) + ' '
-        text = text.lower()
-       
-        # Repeat for self.phrase
-        cleaned_phrase = self.phrase
-        for char in string.punctuation:
-            cleaned_phrase = cleaned_phrase.replace(char, ' ')
-        cleaned_phrase_list = cleaned_phrase.split()
-        cleaned_phrase = ' '.join(cleaned_phrase_list) + ' '
-        cleaned_phrase = cleaned_phrase.lower()
+        def clean_inputs(text):
+            # Helper function.
+            # Processes text input by first stripping out all punctuation,
+            # by replacing with whitespace, then splitting the text into substrings
+            # on whitespace boundaries and rejoining with spaces, and then finally
+            # reducing all characters in text to lowercase
+            for char in string.punctuation:
+                text = text.replace(char, ' ')
+                text_list = text.split()
+                text = ' '.join(text_list) + ' '
+                text = text.lower()
+            return text
 
-        # TODO: Refactor this to implement cleaning the inputs as a function
+        cleaned_text = clean_inputs(text)
+        cleaned_phrase = clean_inputs(self.phrase)
 
         # Check cleaned text for instance of phrase
-        if cleaned_phrase in text:
+        if cleaned_phrase in cleaned_text:
             return True
         else:
             return False   
@@ -410,7 +405,7 @@ def read_trigger_config(filename):
                 trigger_list.append(trigger_dict[t])
         else:
             parse_line(line)
-    print(trigger_list)
+            
     return trigger_list
 
 
@@ -427,8 +422,8 @@ def main_thread(master):
         #triggerlist = [t1, t4]
 
         # Problem 11
-        triggerlist = read_trigger_config('triggers.txt')
         
+        triggerlist = read_trigger_config('triggers.txt')
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
         # Retrieves and filters the stories from the RSS feeds
@@ -453,7 +448,7 @@ def main_thread(master):
                 cont.insert(END, newstory.get_title()+"\n", "title")
                 cont.insert(END, "\n---------------------------------------------------------------\n", "title")
                 cont.insert(END, newstory.get_description(), ' ')
-                cont.insert(END, newstory.get_pubdate())
+                cont.insert(END, newstory.get_pubdate(), ' ')
                 cont.insert(END, "\n*********************************************************************\n", "title")
                 guidShown.append(newstory.get_guid())
 
