@@ -120,19 +120,24 @@ def brute_force_cow_transport(cows,limit=10):
     for partition in partitions_list:
         oversize = False
         for trip in partition:
+            if oversize == True:
+                break
             encumbrance = 0
-            print(trip)
             for cow in trip:
                 encumbrance += cow[1]
-                print(encumbrance)
                 if encumbrance > limit:
                     oversize = True
                     break
-                elif oversize != True:
-                    optimal_partition = partition
-                    print(optimal_partition, 'should be optimal?')
-                    break
-        # NOT DONE YET I'M CONFUSED AND TIRED!
+        if oversize == False:
+            break
+        
+    optimal_partition = []
+    for trip in partition:
+        current_trip = []
+        for cow in trip:
+            current_trip.append(cow[0])
+        optimal_partition.append(current_trip)
+    return(optimal_partition)
     
         
 # Problem 4
@@ -149,5 +154,20 @@ def compare_cow_transport_algorithms():
     Returns:
     Does not return anything.
     """
-    # TODO: Your code here
-    pass
+    cows_dict = load_cows('ps1_cow_data_2.txt')
+    print('Loaded cow data.')
+    print('Testing the greedy algorithm.')
+    start = time.time()
+    print('Result from greedy algorithm:', greedy_cow_transport(cows_dict))
+    end = time.time()
+    
+    print('Time needed to execute the greedy algorithm, in seconds:')
+    print(end - start)
+    
+    print('Testing the brute force algorithm.')
+    start = time.time()
+    print('Result from brute force algorithm:', brute_force_cow_transport(cows_dict))
+    end = time.time()
+    
+    print('Time needed to execute the greedy algorithm, in seconds:')
+    print((end - start))
