@@ -86,7 +86,7 @@ class Digraph(object):
                 edge_strs.append(str(edge))
         edge_strs = sorted(edge_strs)  # sort alphabetically
         return '\n'.join(edge_strs)  # concat edge_strs with "\n"s between them
-
+    
     def get_edges_for_node(self, node):
         return self.edges[node]
 
@@ -111,7 +111,7 @@ class Digraph(object):
         if not (self.has_node(src) and self.has_node(dest)):
             raise ValueError('One or more nodes not in Digraph')
         else:
-            self.edges[src].append(dest)
+            self.edges[src].append(edge)
 
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line
@@ -164,6 +164,7 @@ class TestGraph(unittest.TestCase):
             self.g.add_node(self.na)
 
     def test_graph_str(self):
+        print(self.e2)
         expected = "a->b (15, 10)\na->c (14, 6)\nb->c (3, 1)"
         self.assertEqual(str(self.g), expected)
 

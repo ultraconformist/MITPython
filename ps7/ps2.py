@@ -20,7 +20,12 @@ from graph import Digraph, Node, WeightedEdge
 # represented?
 #
 # Answer:
-#
+# The nodes in this problem are the buildings on campus;
+# the edges are the paths between the buildings.
+# The distances are, color-coded, the meters of distance it will take to travel
+# from one building to another, with the blue numbers showing total distance,
+# and the green numbers showing distance spent outdoors. (Thus, logically, the
+# distance traveled indoors = total_distance - outdoor-distance.)
 
 
 # Problem 2b: Implementing load_map
@@ -42,13 +47,33 @@ def load_map(map_filename):
     Returns:
         a Digraph representing the map
     """
-
-    # TODO
+    map_file = open(map_filename, 'r')
+    map_list = map_file.read().lower().splitlines()
+    loaded_map = Digraph()
+    for edge in map_list:
+        edge_list = edge.split()
+        node_a = Node(edge_list[0])
+        node_b = Node(edge_list[1])
+        total_dist = int(edge_list[2])
+        outdoor_dist = int(edge_list[3])
+        if not loaded_map.has_node(node_a):
+            loaded_map.add_node(node_a)
+        if not loaded_map.has_node(node_b):
+            loaded_map.add_node(node_b)
+        edge_temp = WeightedEdge(node_a, node_b, total_dist, outdoor_dist)
+        loaded_map.add_edge(edge_temp)
     print("Loading map from file...")
-
+    return loaded_map
 # Problem 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
-
+#test_map = load_map('test_load_map.txt')
+#expected_string = 'a->b (5, 2)\na->c (5, 2)\nb->a (9, 4)\nb->c (3, 1)'
+#print('Expecting:\n' + expected_string)
+#print('Got:\n' + str(test_map))
+#if expected_string == str(test_map):
+#    print('Map loaded correctly.')
+#else:
+#    print('Map loaded incorrectly.')
 
 #
 # Problem 3: Finding the Shorest Path using Optimized Search Method
