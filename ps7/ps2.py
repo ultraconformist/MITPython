@@ -88,7 +88,7 @@ def load_map(map_filename):
 
 # Problem 3b: Implement get_best_path
 def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
-                  best_path = None):
+                  best_path):
     """
     Finds the shortest path between buildings subject to constraints.
 
@@ -121,7 +121,7 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
-    path = [[path[0] + [start]], path[1], path[2]]
+    path = [path[0] + [start], path[1], path[2]]
     start_node = Node(start)
     end_node = Node(end)
     # if start and end are not valid nodes:
@@ -131,9 +131,8 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
     # elif start and end are the same node:
     #   update the global variables appropriately
     elif start == end:
-        new_path = path[0]
-        best_tot_dist = path[1]
-        best_out_dist = path[2]
+        best_path = path[0]
+        
     # else:
     #   for all the child nodes of start
     #       construct a path including that node
@@ -141,24 +140,30 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
     #       to the end node
     for node in digraph.get_edges_for_node(start_node):
         dest_str = str(node.get_destination())   # Get destination node as str
-        if dest_str not in path[0]:  #No cycles
+        if dest_str not in path[0]:  #No cycles            
             updated_total_dist = path[1] + node.get_total_distance()
             updated_total_outdoor = path[2] + node.get_outdoor_distance()
-            
+            #print('best_dist =', best_dist)
+            #print('best_path =', best_path)
             if best_path == None or updated_total_dist < best_dist:
                 if updated_total_outdoor <= max_dist_outdoors:
                     path = [path[0], updated_total_dist, updated_total_outdoor]                    
-                    updated_path = get_best_path(digraph, dest_str, end, \
+                    best_dist = updated_total_dist
+                    updated_pathlist = get_best_path(digraph, dest_str, end, \
                                                  path, max_dist_outdoors, \
-                                                 best_path)
-                    if updated_path != None:
-                        new_path = updated_path[0]
-                        best_tot_dist = path[1]
-                        best_out_dist = path[2]
+                                                 best_dist, best_path)
+                    # Backtrack and update the best path
+                    if updated_pathlist != None:
+                        #print(path, updated_pathlist)
+                        new_path = updated_pathlist[0]
+                        path[1] = updated_pathlist[1] - node.get_total_distance()
+                        path[2] = updated_pathlist[2] - node.get_outdoor_distance()
+                        best_path = (new_path)
                         
-    # return the shortest path
-    return (new_path, best_tot_dist, best_out_dist)
-
+    #print(new_best_path)
+    print(best_path, path[1], path[2])
+    return (best_path, path[1], path[2])
+    
 # Problem 3c: Implement directed_dfs
 def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
     """
@@ -193,10 +198,10 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
     best_dist = max_total_dist
     solution = get_best_path(digraph, start, end, path, max_dist_outdoors,\
                   best_dist, best_path)
-    if solution[1] > max_total_dist:
-        raise ValueError('No path that satisfies max_total_dist constraint')
-    else:
+    if solution[0] != None and solution[1] <= max_total_dist:
         return solution[0]
+    else:
+        raise ValueError('No path that satisfies constraints')    
 
 
 # ================================================================
