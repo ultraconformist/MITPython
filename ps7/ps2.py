@@ -131,38 +131,34 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
     # elif start and end are the same node:
     #   update the global variables appropriately
     elif start == end:
-        best_path = path[0]
+        return path
         
     # else:
     #   for all the child nodes of start
     #       construct a path including that node
     #       recursively solve the rest of the path, from the child node 
     #       to the end node
-    for node in digraph.get_edges_for_node(start_node):
-        dest_str = str(node.get_destination())   # Get destination node as str
+    for edge in digraph.get_edges_for_node(start_node):
+        dest_str = str(edge.get_destination())   # Get destination node as str
         if dest_str not in path[0]:  #No cycles            
-            updated_total_dist = path[1] + node.get_total_distance()
-            updated_total_outdoor = path[2] + node.get_outdoor_distance()
-            #print('best_dist =', best_dist)
-            #print('best_path =', best_path)
+            updated_total_dist = path[1] + edge.get_total_distance()
+            updated_total_outdoor = path[2] + edge.get_outdoor_distance()
             if best_path == None or updated_total_dist < best_dist:
                 if updated_total_outdoor <= max_dist_outdoors:
                     path = [path[0], updated_total_dist, updated_total_outdoor]                    
-                    best_dist = updated_total_dist
                     updated_pathlist = get_best_path(digraph, dest_str, end, \
                                                  path, max_dist_outdoors, \
                                                  best_dist, best_path)
+                    #print(updated_pathlist, 'updated pathlist')
                     # Backtrack and update the best path
                     if updated_pathlist != None:
                         #print(path, updated_pathlist)
-                        new_path = updated_pathlist[0]
-                        path[1] = updated_pathlist[1] - node.get_total_distance()
-                        path[2] = updated_pathlist[2] - node.get_outdoor_distance()
-                        best_path = (new_path)
+                        best_path = updated_pathlist[0]
+                        best_dist = updated_pathlist[1]
+                        path[1] = path[1] - edge.get_total_distance()
+                        path[2] = path[2] - edge.get_outdoor_distance()
                         
-    #print(new_best_path)
-    print(best_path, path[1], path[2])
-    return (best_path, path[1], path[2])
+    return (best_path, best_dist, path[2])
     
 # Problem 3c: Implement directed_dfs
 def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
