@@ -61,6 +61,7 @@ def load_map(map_filename):
         edge_temp = WeightedEdge(node_a, node_b, total_dist, outdoor_dist)
         loaded_map.add_edge(edge_temp)
     print("Loading map from file...")
+    map_file.close()
     return loaded_map
 # Problem 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
