@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Problem Set 3: Simulating robots
 # Name: Morgan
-# Time:
 
 import math
 import random
@@ -80,8 +79,8 @@ class RectangularRoom(object):
         height: an integer > 0
         dirt_amount: an integer >= 0
         """
-        self.width = width
-        self.height = height
+        self.width = int(width)
+        self.height = int(height)
         self.Tiles = {} # Dict containing tiles in the rectangular room,  
                         # stored as a key-value pair where the Key 
                         # is a tuple object representing a position
@@ -480,7 +479,7 @@ class FaultyRobot(Robot):
 
 # === Problem 5
 def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_coverage, num_trials,
-                  robot_type):
+                  robot_type, room_type = EmptyRoom):
     """
     Runs num_trials trials of the simulation and returns the mean number of
     time-steps needed to clean the fraction min_coverage of the room.
@@ -502,7 +501,7 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
     """
     time_steps_list = []
     for e in range(num_trials):
-        dirty_room = EmptyRoom(width, height, dirt_amount)
+        dirty_room = room_type(width, height, dirt_amount)
         robots = []
         time_steps = 0
         for i in range(num_robots):
@@ -512,7 +511,7 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
                 robot.update_position_and_clean()
             time_steps += 1
         time_steps_list.append(time_steps)
-    return (sum(time_steps_list)/len(time_steps_list))
+    return int(sum(time_steps_list)/len(time_steps_list))
 
 
 #print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, StandardRobot)))
@@ -527,14 +526,20 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
 #
 # 1)How does the performance of the two robot types compare when cleaning 80%
 #       of a 20x20 room?
-#
+# A StandardRobot takes an average of 2008 steps; a FaultyRobot at least 2403
+# steps. The FaultyRobot thus takes ~17% time to complete the task.
 #
 # 2) How does the performance of the two robot types compare when two of each
 #       robot cleans 80% of rooms with dimensions 
 #       10x30, 20x15, 25x12, and 50x6?
+# for a room of size  (10, 30) two faulty robots take  928 and two standard robot take  310  to clear 80% of the room
+# for a room of size  (20, 15) two faulty robots take  925 and two standard robot take  303  to clear 80% of the room
+# for a room of size  (25, 12) two faulty robots take  933 and two standard robot take  307  to clear 80% of the room
+# for a room of size  (50, 6) two faulty robots take  1138 and two standard robot take  322  to clear 80% of the room    
+# The difference in performance is much more substantial; it's about three times
+# more efficient to use a standard robot in this case.
 #
-#
-
+    
 def show_plot_compare_strategies(title, x_label, y_label):
     """
     Produces a plot comparing the two robot strategies in a 20x20 room with 80%
